@@ -1,5 +1,6 @@
 {% load static %}
 
+{% if user.is_authenticated  %}
 <ul class="p-4">
     <li>
         <a href="{% url 'users:profile' user.username %}" class="flex items-center space-x-2 p-2 hover:bg-gray-200 rounded-lg transition-all dark:text-dark-txt dark:hover:bg-dark-third">
@@ -15,4 +16,5 @@
     </li>
     <li class="border-b border-gray-200 dark:border-dark-third mt-6"></li>
 </ul>
+{% endif %}
 

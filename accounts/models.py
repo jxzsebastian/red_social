@@ -38,13 +38,13 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    picture = models.ImageField(default='users/user_default_profile.png ', upload_to=user_directory_path_profile)
+    picture = models.ImageField(default='users/user_default_profile.png', upload_to=user_directory_path_profile)
     banner = models.ImageField(default='users/user_default_bg.jpg', upload_to=user_directory_path_banner)
     verified = models.CharField(max_length=50, choices=VERIFICATION_OPTIONS, default='unverified')
     coins = models.DecimalField(max_digits=19, decimal_places=2, default=0, blank=False)
     date_created = models.DateField(auto_now_add=True)
     location = models.CharField(max_length=50, null=True, blank=True)
-    url = models.CharField(null=True, blank=True, max_length=50)
+    url = models.CharField(null=True, blank=True, max_length=100)
     birthday = models.DateField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True, max_length=150)
 
