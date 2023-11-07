@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from social.forms import SocialPostForm
 from social.models import Image, SocialPost, SocialComment
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic.base import View
+from django.contrib import messages
 
 User = get_user_model()
 
@@ -51,5 +54,37 @@ class UserProfileView(View):
                 print(form.errors)  # Esto imprimirá los errores del formulario en la consola
                 return HttpResponse("El formulario no es válido. Por favor, corrige los errores e inténtalo de nuevo.")
 
+class AddFollower(LoginRequiredMixin):
+    def post(self, request, pk, *args, **kwargs):
+        profile = Profile.object.get(pk=pk)
+        profile.followers.add(request.user)
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'User Followed'
+        )
 
-    
+        return redirect('users:profile', username=request.user.username)
+
+class RemoveFollower(LoginRequiredMixin):
+    def post(self, request, pk, *args, **kwargs):
+        profile = Profile.object.get(pk=pk)
+        profile.followers.remove(request.user)
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            'User Unfollowed'
+        )
+
+        return redirect('users:profile', username=request.user.username)
+
+class ListFollowers(View):
+    def get(self, request, pk, *args, **kwargs):
+        profile = Profile.object.get(pk=pk)
+        followers = profile.followers.all()
+
+        context = {
+            'profile':profile,
+            'followers':followers,
+        }
+        return render(request, 'pages/social/followers_list.html', context)

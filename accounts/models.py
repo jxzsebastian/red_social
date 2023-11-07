@@ -43,6 +43,7 @@ class Profile(models.Model):
     verified = models.CharField(max_length=50, choices=VERIFICATION_OPTIONS, default='unverified')
     coins = models.DecimalField(max_digits=19, decimal_places=2, default=0, blank=False)
     date_created = models.DateField(auto_now_add=True)
+    followers = models.ManyToManyField(User, blank=True, related_name="followers")
     location = models.CharField(max_length=50, null=True, blank=True)
     url = models.CharField(null=True, blank=True, max_length=100)
     birthday = models.DateField(null=True, blank=True)

@@ -15,17 +15,30 @@ def dm_directory_path(instance,filename):
 class SocialPost(models.Model):
     body = models.TextField()
     image = models.ManyToManyField("Image", blank=True)
-    created_on = models.DateField( default=timezone.now)
+    created_on = models.DateTimeField( default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='social_post_author')
     likes = models.ManyToManyField(User, blank=True , related_name="likes")
     dislikes =models.ManyToManyField(User, blank=True , related_name="dislikes")
 
 class SocialComment(models.Model):
+    post = models.ForeignKey("SocialPost", on_delete=models.CASCADE)
     comment = models.TextField()
-    created_on = models.DateField( default=timezone.now)
+    created_on = models.DateTimeField( default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_social_post_author')
     likes = models.ManyToManyField(User, blank=True , related_name="comment_likes")
     dislikes =models.ManyToManyField(User, blank=True , related_name="comment_dislikes")
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, blank=True, null=True ,related_name="+")
+
+    @property
+    def children(self):
+        return SocialComment.objects.filter(parent=self).order_by('-created_on').all()
+
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
+
 
 class Image(models.Model):
     image = models.ImageField(upload_to=user_directory_path, blank=True , null=True)

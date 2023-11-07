@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% load humanize %}
+
+
 {% block navbar %} 
-    {% include "components/navbar.html" %}
+ {% include "components/navbar.html" %}
 {% endblock navbar %}
 
 {% block left_sidebar %}
@@ -49,7 +52,7 @@
              
                 <div class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
 
-                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-300">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-blue-600 dark:text-dark-txt">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
                         </svg>
@@ -105,7 +108,7 @@
                         {{post.author.username}}
                     </div>
                     </a>
-                    <span class="text-sm text-gray-500">{{post.created_on}}</span>
+                    <span class="text-sm text-gray-500">{{post.created_on|naturaltime}}</span>
                 </div>
             </div>
             
@@ -141,8 +144,8 @@
         {% if post.image.count == 1 %}
         <div class="py-2">
             {% for img in post.image.all %}
-                <a href="">
-                    <img src="{{img.image.url}}" class="w-full h-48 object-cover rounded-md" alt="Post image">
+                <a href="{% url 'social:post-detail' post.pk %}">
+                    <img src="{{img.image.url}}" class="w-full max-h-6xl h-full object-cover rounded-md" alt="Post image">
                 </a>
             {% endfor %}
         </div>
@@ -150,14 +153,13 @@
 
         {% if post.image.count > 1 %}
         <div class="py-2">
-            <div class="grid grid-cols-6 gap-y-10 gap-x-6 sm:grid-cols-3 lg:grid-cols-3 lg:gap-x-8">
+            <div class="grid grid-cols-6 col-span-2 gap-2 ">
                 {% for img in post.image.all %}
-                    <div href="" class="overflow-hidden rounded-xl col-span-2 max-h-[14rem]">
+                    <a href="{% url 'social:post-detail' post.pk %}" class="overflow-hidden rounded-xl col-span-3 max-h-[14rem]">
                         <img src="{{img.image.url}}" class="h-full w-full object-cover" alt="Post image">
-                    </div>
+                    </a>
                 {% endfor %}
             </div>
-
         </div>
         {% endif %}
         <!-- END POST IMAGE -->
