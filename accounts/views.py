@@ -21,12 +21,28 @@ class UserProfileView(View):
         form_post = SocialPostForm()
         posts = SocialPost.objects.filter(author=user)
 
+        followers = profile.followers.all()
+
+        if len(followers) == 0:
+            is_following = False
+        
+        for follower in followers:
+            if follower == request.user:
+                is_following = True
+                break
+            else:
+                is_following = False
+
+        number_of_followers = len(followers)
+
         context = {
             'user': user,
             'profile' : profile,
             'form' : form,
             'form_post' : form_post,
             'posts' : posts,
+            'is_following': is_following,
+            'number_of_followers':number_of_followers,
         }
         return render(request, 'users/detail.html', context)
     
@@ -54,7 +70,7 @@ class UserProfileView(View):
                 print(form.errors)  # Esto imprimirá los errores del formulario en la consola
                 return HttpResponse("El formulario no es válido. Por favor, corrige los errores e inténtalo de nuevo.")
 
-class AddFollower(LoginRequiredMixin):
+class AddFollower(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         profile = Profile.object.get(pk=pk)
         profile.followers.add(request.user)
@@ -66,7 +82,7 @@ class AddFollower(LoginRequiredMixin):
 
         return redirect('users:profile', username=request.user.username)
 
-class RemoveFollower(LoginRequiredMixin):
+class RemoveFollower(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         profile = Profile.object.get(pk=pk)
         profile.followers.remove(request.user)
